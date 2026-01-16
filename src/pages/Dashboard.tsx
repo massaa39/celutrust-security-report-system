@@ -119,7 +119,7 @@ export function Dashboard() {
             <span className="text-sm text-gray-600">{user?.email}</span>
             <button
               onClick={handleLogout}
-              className="text-sm text-blue-600 hover:text-blue-800"
+              className="text-sm text-slate-600 hover:text-slate-800"
             >
               ログアウト
             </button>
@@ -137,7 +137,7 @@ export function Dashboard() {
         <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
           <button
             onClick={() => navigate('/report/new')}
-            className="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            className="bg-emerald-600 text-white py-2 px-4 rounded-md hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
           >
             新規報告書作成
           </button>
@@ -162,7 +162,7 @@ export function Dashboard() {
                 </label>
                 <input
                   type="date"
-                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 sm:text-sm"
                   value={searchFilters.startDate}
                   onChange={(e) =>
                     setSearchFilters({ ...searchFilters, startDate: e.target.value })
@@ -175,7 +175,7 @@ export function Dashboard() {
                 </label>
                 <input
                   type="date"
-                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 sm:text-sm"
                   value={searchFilters.endDate}
                   onChange={(e) =>
                     setSearchFilters({ ...searchFilters, endDate: e.target.value })
@@ -188,7 +188,7 @@ export function Dashboard() {
                 </label>
                 <input
                   type="text"
-                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 sm:text-sm"
                   value={searchFilters.contractName}
                   onChange={(e) =>
                     setSearchFilters({ ...searchFilters, contractName: e.target.value })
@@ -200,7 +200,7 @@ export function Dashboard() {
             <div className="mt-4 flex space-x-2">
               <button
                 onClick={handleSearch}
-                className="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                className="bg-emerald-600 text-white py-2 px-4 rounded-md hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
               >
                 検索
               </button>
@@ -271,7 +271,7 @@ export function Dashboard() {
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
                         <button
                           onClick={() => handleDownloadPDF(report)}
-                          className="text-blue-600 hover:text-blue-900"
+                          className="text-slate-600 hover:text-slate-900"
                         >
                           PDF出力
                         </button>

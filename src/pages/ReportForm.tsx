@@ -118,7 +118,7 @@ export function ReportForm() {
                 id="contract_name"
                 name="contract_name"
                 required
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 sm:text-sm"
                 value={formData.contract_name}
                 onChange={handleInputChange}
                 disabled={loading}
@@ -137,7 +137,7 @@ export function ReportForm() {
                 id="guard_location"
                 name="guard_location"
                 required
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 sm:text-sm"
                 value={formData.guard_location}
                 onChange={handleInputChange}
                 disabled={loading}
@@ -157,7 +157,7 @@ export function ReportForm() {
                   id="work_date_from"
                   name="work_date_from"
                   required
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 sm:text-sm"
                   value={formData.work_date_from}
                   onChange={handleInputChange}
                   disabled={loading}
@@ -176,7 +176,7 @@ export function ReportForm() {
                   id="work_date_to"
                   name="work_date_to"
                   required
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 sm:text-sm"
                   value={formData.work_date_to}
                   onChange={handleInputChange}
                   disabled={loading}
@@ -195,7 +195,7 @@ export function ReportForm() {
                 id="work_type"
                 name="work_type"
                 required
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 sm:text-sm"
                 value={formData.work_type}
                 onChange={handleInputChange}
                 disabled={loading}
@@ -220,7 +220,7 @@ export function ReportForm() {
                 id="work_detail"
                 name="work_detail"
                 rows={4}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 sm:text-sm"
                 value={formData.work_detail}
                 onChange={handleInputChange}
                 disabled={loading}
@@ -237,7 +237,7 @@ export function ReportForm() {
                 multiple
                 onChange={handleFileChange}
                 disabled={loading}
-                className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-slate-50 file:text-slate-700 hover:file:bg-slate-100"
               />
               {selectedFiles.length > 0 && (
                 <p className="mt-2 text-sm text-gray-500">
@@ -248,7 +248,7 @@ export function ReportForm() {
                 <div className="mt-2">
                   <div className="bg-gray-200 rounded-full h-2">
                     <div
-                      className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                      className="bg-emerald-600 h-2 rounded-full transition-all duration-300"
                       style={{ width: `${uploadProgress}%` }}
                     />
                   </div>
@@ -273,7 +273,7 @@ export function ReportForm() {
                       checked={formData.special_notes === 'no' || formData.special_notes === ''}
                       onChange={handleInputChange}
                       disabled={loading}
-                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                      className="h-4 w-4 text-slate-600 focus:ring-slate-500 border-gray-300"
                     />
                     <span className="ml-2 text-sm text-gray-900">なし</span>
                   </label>
@@ -285,7 +285,7 @@ export function ReportForm() {
                       checked={formData.special_notes === 'yes'}
                       onChange={handleInputChange}
                       disabled={loading}
-                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                      className="h-4 w-4 text-slate-600 focus:ring-slate-500 border-gray-300"
                     />
                     <span className="ml-2 text-sm text-gray-900">あり</span>
                   </label>
@@ -302,7 +302,7 @@ export function ReportForm() {
                       id="special_notes_detail"
                       name="special_notes_detail"
                       rows={4}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 sm:text-sm"
                       value={formData.special_notes_detail}
                       onChange={handleInputChange}
                       disabled={loading}
@@ -320,7 +320,7 @@ export function ReportForm() {
                     type="checkbox"
                     id="traffic_guide_assigned"
                     name="traffic_guide_assigned"
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    className="h-4 w-4 text-slate-600 focus:ring-slate-500 border-gray-300 rounded"
                     checked={formData.traffic_guide_assigned}
                     onChange={handleInputChange}
                     disabled={loading}
@@ -344,7 +344,7 @@ export function ReportForm() {
                       type="text"
                       id="traffic_guide_assignee_name"
                       name="traffic_guide_assignee_name"
-                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 sm:text-sm"
                       value={formData.traffic_guide_assignee_name}
                       onChange={handleInputChange}
                       disabled={loading}
@@ -360,7 +360,7 @@ export function ReportForm() {
                     type="checkbox"
                     id="misc_guard_assigned"
                     name="misc_guard_assigned"
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    className="h-4 w-4 text-slate-600 focus:ring-slate-500 border-gray-300 rounded"
                     checked={formData.misc_guard_assigned}
                     onChange={handleInputChange}
                     disabled={loading}
@@ -384,7 +384,7 @@ export function ReportForm() {
                       type="text"
                       id="misc_guard_assignee_name"
                       name="misc_guard_assignee_name"
-                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 sm:text-sm"
                       value={formData.misc_guard_assignee_name}
                       onChange={handleInputChange}
                       disabled={loading}
@@ -406,7 +406,7 @@ export function ReportForm() {
                 id="remarks"
                 name="remarks"
                 rows={4}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 sm:text-sm"
                 value={formData.remarks}
                 onChange={handleInputChange}
                 disabled={loading}
@@ -418,7 +418,7 @@ export function ReportForm() {
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 bg-emerald-600 text-white py-2 px-4 rounded-md hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? '送信中...' : '報告書を送信'}
               </button>
