@@ -161,15 +161,6 @@ export function ReportFromPhoto() {
               ← 戻る
             </button>
           </div>
-
-          {/* APIキー警告 */}
-          {!ocrService.isConfigured() && (
-            <div className="mt-8 p-4 bg-yellow-50 border-2 border-yellow-300 rounded-lg">
-              <p className="text-sm text-yellow-800">
-                ⚠️ 写真解析機能を使用するには、管理者にAnthropicAPIキーの設定を依頼してください。
-              </p>
-            </div>
-          )}
         </div>
       </div>
     );
