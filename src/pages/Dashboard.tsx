@@ -134,32 +134,35 @@ export function Dashboard() {
           </div>
         )}
 
-        <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
-          <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3 w-full sm:w-auto">
-            <button
-              onClick={() => navigate('/report/from-photo')}
-              className="bg-gradient-to-r from-emerald-600 to-emerald-700 text-white py-4 px-6 rounded-lg hover:from-emerald-700 hover:to-emerald-800 focus:outline-none focus:ring-4 focus:ring-emerald-500 focus:ring-offset-2 shadow-lg font-bold text-lg flex items-center justify-center space-x-2 transition-all"
-            >
-              <span className="text-2xl">📷</span>
-              <span>写真で報告（簡単！）</span>
-            </button>
+        {/* モバイルファースト設計：写真で報告を最優先表示 */}
+        <div className="mb-6 space-y-4">
+          {/* 写真で報告ボタン - モバイルで特大表示 */}
+          <button
+            onClick={() => navigate('/report/from-photo')}
+            className="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 text-white py-6 px-8 rounded-xl hover:from-emerald-700 hover:to-emerald-800 focus:outline-none focus:ring-4 focus:ring-emerald-500 focus:ring-offset-2 shadow-2xl font-bold text-2xl flex items-center justify-center space-x-3 transition-all transform hover:scale-105 sm:w-auto"
+          >
+            <span className="text-4xl">📷</span>
+            <span>写真で報告（簡単！）</span>
+          </button>
 
+          {/* サブボタン群 */}
+          <div className="flex flex-col sm:flex-row gap-3">
             <button
               onClick={() => navigate('/report/new')}
-              className="bg-emerald-600 text-white py-2 px-4 rounded-md hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+              className="w-full sm:w-auto bg-emerald-600 text-white py-3 px-5 rounded-md hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 text-base font-medium"
             >
               通常入力で作成
             </button>
-          </div>
 
-          {isAdmin && reports.length > 0 && (
-            <button
-              onClick={handleBatchDownloadPDF}
-              className="bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
-            >
-              一括PDF出力
-            </button>
-          )}
+            {isAdmin && reports.length > 0 && (
+              <button
+                onClick={handleBatchDownloadPDF}
+                className="w-full sm:w-auto bg-green-600 text-white py-3 px-5 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 text-base font-medium"
+              >
+                一括PDF出力
+              </button>
+            )}
+          </div>
         </div>
 
         {isAdmin && (
