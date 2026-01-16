@@ -54,10 +54,30 @@ async function addReportPageToPDF(pdf: jsPDF, report: Report, userName: string):
     });
 
     const imgData = canvas.toDataURL('image/png');
-    const imgWidth = 210; // A4 width in mm
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-    pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+    // A4 dimensions in mm
+    const A4_WIDTH = 210;
+    const A4_HEIGHT = 297;
+    const MARGIN = 10; // マージン
+
+    // Calculate aspect ratio
+    const canvasAspectRatio = canvas.width / canvas.height;
+
+    // Calculate dimensions to fit within A4 with margins
+    let imgWidth = A4_WIDTH - (MARGIN * 2);
+    let imgHeight = imgWidth / canvasAspectRatio;
+
+    // If height exceeds A4, scale down to fit height instead
+    if (imgHeight > A4_HEIGHT - (MARGIN * 2)) {
+      imgHeight = A4_HEIGHT - (MARGIN * 2);
+      imgWidth = imgHeight * canvasAspectRatio;
+    }
+
+    // Center the image on the page
+    const xOffset = (A4_WIDTH - imgWidth) / 2;
+    const yOffset = (A4_HEIGHT - imgHeight) / 2;
+
+    pdf.addImage(imgData, 'PNG', xOffset, yOffset, imgWidth, imgHeight);
   } finally {
     document.body.removeChild(container);
   }
@@ -71,10 +91,10 @@ function createReportHTML(report: Report, userName: string): HTMLDivElement {
     top: 0;
     width: 794px;
     background: white;
-    padding: 40px;
+    padding: 30px;
     font-family: 'Noto Sans JP', 'Yu Gothic', 'Meiryo', sans-serif;
-    font-size: 14px;
-    line-height: 1.6;
+    font-size: 13px;
+    line-height: 1.5;
   `;
 
   const hasSpecialNotes = report.special_notes === 'yes' || (report.special_notes_detail && report.special_notes_detail.length > 0);
@@ -85,19 +105,19 @@ function createReportHTML(report: Report, userName: string): HTMLDivElement {
         box-sizing: border-box;
       }
       .pdf-title {
-        font-size: 24px;
+        font-size: 22px;
         font-weight: bold;
         text-align: center;
-        margin-bottom: 20px;
+        margin-bottom: 15px;
       }
       .pdf-table {
         width: 100%;
         border-collapse: collapse;
-        margin-bottom: 15px;
+        margin-bottom: 10px;
       }
       .pdf-table td, .pdf-table th {
         border: 1px solid #000;
-        padding: 8px;
+        padding: 6px;
       }
       .pdf-table th {
         background-color: #e0e0e0;
@@ -107,27 +127,27 @@ function createReportHTML(report: Report, userName: string): HTMLDivElement {
       .pdf-checkbox {
         font-size: 16px;
       }
-      .pdf-footer {
-        margin-top: 30px;
-        font-size: 12px;
-        line-height: 1.8;
-      }
       .pdf-work-detail-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         gap: 0;
         border: 1px solid #000;
-        margin-bottom: 15px;
+        margin-bottom: 10px;
       }
       .pdf-work-detail-cell {
         border: 1px solid #000;
-        padding: 10px;
-        min-height: 60px;
+        padding: 8px;
+        min-height: 50px;
       }
       .pdf-work-detail-number {
-        font-size: 12px;
+        font-size: 11px;
         color: #666;
-        margin-bottom: 5px;
+        margin-bottom: 3px;
+      }
+      .pdf-footer {
+        margin-top: 15px;
+        font-size: 11px;
+        line-height: 1.6;
       }
     </style>
     <div class="pdf-container">
@@ -224,7 +244,7 @@ function createReportHTML(report: Report, userName: string): HTMLDivElement {
           <th>備考</th>
         </tr>
         <tr>
-          <td style="min-height: 80px; vertical-align: top;">
+          <td style="min-height: 50px; vertical-align: top;">
             ${report.remarks ? escapeHtml(report.remarks) : ''}
           </td>
         </tr>
