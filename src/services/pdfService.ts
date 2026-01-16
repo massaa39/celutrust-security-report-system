@@ -91,10 +91,10 @@ function createReportHTML(report: Report, userName: string): HTMLDivElement {
     top: 0;
     width: 794px;
     background: white;
-    padding: 30px;
+    padding: 20px;
     font-family: 'Noto Sans JP', 'Yu Gothic', 'Meiryo', sans-serif;
-    font-size: 13px;
-    line-height: 1.5;
+    font-size: 12px;
+    line-height: 1.4;
   `;
 
   const hasSpecialNotes = report.special_notes === 'yes' || (report.special_notes_detail && report.special_notes_detail.length > 0);
@@ -105,19 +105,19 @@ function createReportHTML(report: Report, userName: string): HTMLDivElement {
         box-sizing: border-box;
       }
       .pdf-title {
-        font-size: 22px;
+        font-size: 20px;
         font-weight: bold;
         text-align: center;
-        margin-bottom: 15px;
+        margin-bottom: 10px;
       }
       .pdf-table {
         width: 100%;
         border-collapse: collapse;
-        margin-bottom: 10px;
+        margin-bottom: 8px;
       }
       .pdf-table td, .pdf-table th {
         border: 1px solid #000;
-        padding: 6px;
+        padding: 5px;
       }
       .pdf-table th {
         background-color: #e0e0e0;
@@ -125,29 +125,43 @@ function createReportHTML(report: Report, userName: string): HTMLDivElement {
         text-align: left;
       }
       .pdf-checkbox {
-        font-size: 16px;
+        font-size: 14px;
       }
       .pdf-work-detail-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         gap: 0;
         border: 1px solid #000;
-        margin-bottom: 10px;
+        margin-bottom: 8px;
       }
       .pdf-work-detail-cell {
         border: 1px solid #000;
-        padding: 8px;
-        min-height: 50px;
+        padding: 6px;
+        min-height: 45px;
       }
       .pdf-work-detail-number {
-        font-size: 11px;
+        font-size: 10px;
         color: #666;
-        margin-bottom: 3px;
+        margin-bottom: 2px;
+      }
+      .pdf-remarks-section {
+        margin-bottom: 8px;
+        border: 1px solid #000;
+      }
+      .pdf-remarks-header {
+        background-color: #e0e0e0;
+        font-weight: bold;
+        padding: 5px;
+        border-bottom: 1px solid #000;
+      }
+      .pdf-remarks-content {
+        padding: 8px;
+        min-height: 80px;
       }
       .pdf-footer {
-        margin-top: 15px;
-        font-size: 11px;
-        line-height: 1.6;
+        margin-top: 10px;
+        font-size: 10px;
+        line-height: 1.5;
       }
     </style>
     <div class="pdf-container">
@@ -251,16 +265,12 @@ function createReportHTML(report: Report, userName: string): HTMLDivElement {
         </tr>
       </table>
 
-      <table class="pdf-table">
-        <tr>
-          <th>備考</th>
-        </tr>
-        <tr>
-          <td style="min-height: 100px; vertical-align: top;">
-            ${report.remarks ? escapeHtml(report.remarks) : ''}
-          </td>
-        </tr>
-      </table>
+      <div class="pdf-remarks-section">
+        <div class="pdf-remarks-header">備考</div>
+        <div class="pdf-remarks-content">
+          ${report.remarks ? escapeHtml(report.remarks) : ''}
+        </div>
+      </div>
 
       <div class="pdf-footer">
         <div><strong>セリュートラスト株式会社</strong></div>
