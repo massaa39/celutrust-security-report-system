@@ -135,12 +135,22 @@ export function Dashboard() {
         )}
 
         <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
-          <button
-            onClick={() => navigate('/report/new')}
-            className="bg-emerald-600 text-white py-2 px-4 rounded-md hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
-          >
-            新規報告書作成
-          </button>
+          <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3 w-full sm:w-auto">
+            <button
+              onClick={() => navigate('/report/from-photo')}
+              className="bg-gradient-to-r from-emerald-600 to-emerald-700 text-white py-4 px-6 rounded-lg hover:from-emerald-700 hover:to-emerald-800 focus:outline-none focus:ring-4 focus:ring-emerald-500 focus:ring-offset-2 shadow-lg font-bold text-lg flex items-center justify-center space-x-2 transition-all"
+            >
+              <span className="text-2xl">📷</span>
+              <span>写真で報告（簡単！）</span>
+            </button>
+
+            <button
+              onClick={() => navigate('/report/new')}
+              className="bg-emerald-600 text-white py-2 px-4 rounded-md hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+            >
+              通常入力で作成
+            </button>
+          </div>
 
           {isAdmin && reports.length > 0 && (
             <button

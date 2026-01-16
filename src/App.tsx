@@ -4,6 +4,7 @@ import { Login } from './pages/Login';
 import { Signup } from './pages/Signup';
 import { Dashboard } from './pages/Dashboard';
 import { ReportForm } from './pages/ReportForm';
+import { ReportFromPhoto } from './pages/ReportFromPhoto';
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -45,6 +46,14 @@ function AppRoutes() {
         element={
           <PrivateRoute>
             <ReportForm />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/report/from-photo"
+        element={
+          <PrivateRoute>
+            <ReportFromPhoto />
           </PrivateRoute>
         }
       />

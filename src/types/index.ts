@@ -71,3 +71,52 @@ export const WORK_TYPES = {
 } as const;
 
 export type WorkType = keyof typeof WORK_TYPES;
+
+// OCR解析関連の型定義
+export interface OCRAnalysisResult {
+  // 解析されたフォームデータ（ReportFormDataと完全互換）
+  formData: ReportFormData;
+
+  // 解析の信頼度スコア（動的算出、0.0-1.0）
+  confidenceScore: number;
+
+  // フィールドごとの信頼度（動的算出）
+  fieldConfidence: {
+    contract_name: number;
+    guard_location: number;
+    work_type: number;
+    work_date_from: number;
+    work_date_to: number;
+    weather: number;
+    break_time: number;
+    overtime_time: number;
+    assigned_guards: number;
+    special_notes: number;
+    traffic_guide_assigned: number;
+    misc_guard_assigned: number;
+    remarks: number;
+  };
+
+  // 元の画像URL（参照用）
+  originalImageUrl: string;
+
+  // Constitutional AI準拠確認（動的評価）
+  constitutionalCompliance: {
+    isCompliant: boolean;
+    score: number;
+    violations: string[];
+  };
+
+  // 解析メタデータ
+  metadata: {
+    analyzedAt: string;
+    processingTimeMs: number;
+    modelVersion: string;
+  };
+}
+
+export interface OCRError {
+  code: 'INVALID_IMAGE' | 'API_ERROR' | 'PARSE_ERROR' | 'VALIDATION_ERROR' | 'CONSTITUTIONAL_VIOLATION';
+  message: string;
+  details?: unknown;
+}
