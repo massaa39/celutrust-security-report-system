@@ -175,27 +175,39 @@ function createReportHTML(report: Report, userName: string): HTMLDivElement {
         </tr>
         <tr>
           <td>（自） ${formatWarekiDateTime(new Date(report.work_date_from))}</td>
-          <td rowspan="2" style="text-align: center;">休憩<br><br>残業</td>
+          <td style="text-align: center; vertical-align: top; padding-top: 8px;">
+            ${report.weather ? escapeHtml(report.weather) : ''}
+          </td>
         </tr>
         <tr>
           <td>（至） ${formatWarekiDateTime(new Date(report.work_date_to))}</td>
+          <td style="text-align: center;">
+            <div style="margin-bottom: 8px;">
+              <div><strong>休憩</strong></div>
+              <div>${report.break_time ? escapeHtml(report.break_time) : ''}</div>
+            </div>
+            <div>
+              <div><strong>残業</strong></div>
+              <div>${report.overtime_time ? escapeHtml(report.overtime_time) : ''}</div>
+            </div>
+          </td>
         </tr>
       </table>
 
       <table class="pdf-table">
         <tr>
-          <th colspan="2">業務内容</th>
+          <th colspan="2">業　　務</th>
         </tr>
         ${generateWorkTypeRows(report.work_type)}
       </table>
 
       <table class="pdf-table">
         <tr>
-          <th>担当業務詳細</th>
+          <th>担当警備員</th>
         </tr>
       </table>
       <div class="pdf-work-detail-grid">
-        ${generateWorkDetailGrid(report.work_detail || '')}
+        ${generateAssignedGuardsGrid(report.assigned_guards || '')}
       </div>
 
       <table class="pdf-table">
@@ -244,7 +256,7 @@ function createReportHTML(report: Report, userName: string): HTMLDivElement {
           <th>備考</th>
         </tr>
         <tr>
-          <td style="min-height: 50px; vertical-align: top;">
+          <td style="min-height: 100px; vertical-align: top;">
             ${report.remarks ? escapeHtml(report.remarks) : ''}
           </td>
         </tr>
@@ -286,14 +298,16 @@ function generateWorkTypeRows(selectedType: string): string {
     .join('');
 }
 
-function generateWorkDetailGrid(workDetail: string): string {
+function generateAssignedGuardsGrid(assignedGuards: string): string {
+  const guards = assignedGuards ? assignedGuards.split('\n').filter(g => g.trim()) : [];
   const cells = [];
+
   for (let i = 1; i <= 6; i++) {
-    const content = i === 1 && workDetail ? escapeHtml(workDetail) : '';
+    const guardName = guards[i - 1] ? escapeHtml(guards[i - 1].trim()) : '';
     cells.push(`
       <div class="pdf-work-detail-cell">
         <div class="pdf-work-detail-number">${i}</div>
-        <div>${content}</div>
+        <div>${guardName}</div>
       </div>
     `);
   }

@@ -14,6 +14,10 @@ export interface Report {
   work_detail: string | null;
   work_date_from: string;
   work_date_to: string;
+  weather: string | null;
+  break_time: string | null;
+  overtime_time: string | null;
+  assigned_guards: string | null;
   photo_urls: string[];
   special_notes: string | null;
   special_notes_detail: string | null;
@@ -44,6 +48,10 @@ export interface ReportFormData {
   work_detail: string;
   work_date_from: string;
   work_date_to: string;
+  weather: string;
+  break_time: string;
+  overtime_time: string;
+  assigned_guards: string;
   special_notes: string;
   special_notes_detail: string;
   traffic_guide_assigned: boolean;

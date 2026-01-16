@@ -12,6 +12,10 @@ export interface MockReport {
   work_detail: string;
   work_date_from: string;
   work_date_to: string;
+  weather: string | null;
+  break_time: string | null;
+  overtime_time: string | null;
+  assigned_guards: string | null;
   photo_urls: string[];
   special_notes: string;
   special_notes_detail: string | null;
@@ -167,6 +171,10 @@ export const mockReportService = {
         work_detail: '施設 工受',
         work_date_from: yesterday.toISOString(),
         work_date_to: new Date(yesterday.getTime() + 8 * 60 * 60 * 1000).toISOString(),
+        weather: '晴れ',
+        break_time: '1時間',
+        overtime_time: null,
+        assigned_guards: '山田 太郎\n佐藤 次郎',
         photo_urls: [],
         special_notes: 'なし',
         special_notes_detail: null,
@@ -188,6 +196,10 @@ export const mockReportService = {
         work_detail: '巡回 施設',
         work_date_from: now.toISOString(),
         work_date_to: new Date(now.getTime() + 8 * 60 * 60 * 1000).toISOString(),
+        weather: '曇り',
+        break_time: '30分',
+        overtime_time: '2時間',
+        assigned_guards: '佐藤 花子',
         photo_urls: [],
         special_notes: 'あり',
         special_notes_detail: '不審者を発見し、警察へ通報しました。',

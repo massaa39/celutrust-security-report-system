@@ -19,16 +19,36 @@ export const reportSchema = z.object({
     .string()
     .max(1000, '担当業務詳細は1000文字以内で入力してください')
     .default(''),
-  
+
   work_date_from: z
     .string()
     .min(1, '勤務開始日時を入力してください')
     .refine((val) => !isNaN(Date.parse(val)), '有効な日時を入力してください'),
-  
+
   work_date_to: z
     .string()
     .min(1, '勤務終了日時を入力してください')
     .refine((val) => !isNaN(Date.parse(val)), '有効な日時を入力してください'),
+
+  weather: z
+    .string()
+    .max(20, '天気は20文字以内で入力してください')
+    .default(''),
+
+  break_time: z
+    .string()
+    .max(20, '休憩時間は20文字以内で入力してください')
+    .default(''),
+
+  overtime_time: z
+    .string()
+    .max(20, '残業時間は20文字以内で入力してください')
+    .default(''),
+
+  assigned_guards: z
+    .string()
+    .max(500, '担当警備員は500文字以内で入力してください')
+    .default(''),
   
   special_notes: z
     .string()

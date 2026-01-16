@@ -20,6 +20,10 @@ export function ReportForm() {
     work_detail: '',
     work_date_from: '',
     work_date_to: '',
+    weather: '',
+    break_time: '',
+    overtime_time: '',
+    assigned_guards: '',
     special_notes: '',
     special_notes_detail: '',
     traffic_guide_assigned: false,
@@ -184,6 +188,65 @@ export function ReportForm() {
               </div>
             </div>
 
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+              <div>
+                <label
+                  htmlFor="weather"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  天気
+                </label>
+                <input
+                  type="text"
+                  id="weather"
+                  name="weather"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 sm:text-sm"
+                  value={formData.weather}
+                  onChange={handleInputChange}
+                  disabled={loading}
+                  placeholder="晴れ、曇り、雨 等"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="break_time"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  休憩時間
+                </label>
+                <input
+                  type="text"
+                  id="break_time"
+                  name="break_time"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 sm:text-sm"
+                  value={formData.break_time}
+                  onChange={handleInputChange}
+                  disabled={loading}
+                  placeholder="例: 1時間"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="overtime_time"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  残業時間
+                </label>
+                <input
+                  type="text"
+                  id="overtime_time"
+                  name="overtime_time"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 sm:text-sm"
+                  value={formData.overtime_time}
+                  onChange={handleInputChange}
+                  disabled={loading}
+                  placeholder="例: 2時間"
+                />
+              </div>
+            </div>
+
             <div>
               <label
                 htmlFor="work_type"
@@ -211,19 +274,20 @@ export function ReportForm() {
 
             <div>
               <label
-                htmlFor="work_detail"
+                htmlFor="assigned_guards"
                 className="block text-sm font-medium text-gray-700"
               >
-                担当業務詳細
+                担当警備員
               </label>
               <textarea
-                id="work_detail"
-                name="work_detail"
-                rows={4}
+                id="assigned_guards"
+                name="assigned_guards"
+                rows={3}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 sm:text-sm"
-                value={formData.work_detail}
+                value={formData.assigned_guards}
                 onChange={handleInputChange}
                 disabled={loading}
+                placeholder="担当警備員の氏名を入力してください（複数名の場合は改行で区切る）"
               />
             </div>
 
