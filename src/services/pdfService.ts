@@ -1,115 +1,247 @@
 import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 import type { Report } from '../types';
-
-const PAGE_WIDTH = 210;
-const PAGE_HEIGHT = 297;
-const MARGIN = 15;
-const CONTENT_WIDTH = PAGE_WIDTH - (MARGIN * 2);
 
 export const pdfService = {
   async generateReportPDF(report: Report, userName: string): Promise<void> {
-    const doc = new jsPDF({
-      orientation: 'portrait',
-      unit: 'mm',
-      format: 'a4',
-    });
-
-    drawReportPage(doc, report, userName);
-
     const fileName = generateFileName(report);
-    doc.save(fileName);
+    const pdf = await createPDFFromReport(report, userName);
+    pdf.save(fileName);
   },
 
   async generateBatchPDF(reports: Report[], userNames: Map<string, string>): Promise<void> {
-    const doc = new jsPDF({
+    const pdf = new jsPDF({
       orientation: 'portrait',
       unit: 'mm',
       format: 'a4',
     });
 
-    reports.forEach((report, index) => {
-      if (index > 0) {
-        doc.addPage();
+    for (let i = 0; i < reports.length; i++) {
+      if (i > 0) {
+        pdf.addPage();
       }
+      const report = reports[i];
       const userName = userNames.get(report.user_id) || '不明';
-      drawReportPage(doc, report, userName);
-    });
+      await addReportPageToPDF(pdf, report, userName);
+    }
 
     const fileName = `警備報告書一括_${formatDateForFile(new Date())}.pdf`;
-    doc.save(fileName);
+    pdf.save(fileName);
   },
 };
 
-function drawReportPage(doc: jsPDF, report: Report, userName: string): void {
-  let yPos = MARGIN;
+async function createPDFFromReport(report: Report, userName: string): Promise<jsPDF> {
+  const pdf = new jsPDF({
+    orientation: 'portrait',
+    unit: 'mm',
+    format: 'a4',
+  });
 
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(16);
-  const titleWidth = doc.getTextWidth('警備報告書（当社控）');
-  doc.text('警備報告書（当社控）', (PAGE_WIDTH - titleWidth) / 2, yPos);
-  yPos += 10;
+  await addReportPageToPDF(pdf, report, userName);
+  return pdf;
+}
 
-  doc.setDrawColor(0);
-  doc.setLineWidth(0.5);
-  
-  const col1X = MARGIN;
-  const col2X = MARGIN + (CONTENT_WIDTH * 0.75);
-  const rowHeight = 10;
+async function addReportPageToPDF(pdf: jsPDF, report: Report, userName: string): Promise<void> {
+  const container = createReportHTML(report, userName);
+  document.body.appendChild(container);
 
-  doc.setFontSize(10);
-  
-  doc.rect(col1X, yPos, CONTENT_WIDTH * 0.75, rowHeight);
-  doc.rect(col2X, yPos, CONTENT_WIDTH * 0.25, rowHeight);
-  doc.text('契約先', col1X + 2, yPos + 7);
-  doc.text(report.contract_name, col1X + 20, yPos + 7);
-  doc.text('ご署名', col2X + 2, yPos + 7);
-  yPos += rowHeight;
+  try {
+    const canvas = await html2canvas(container, {
+      scale: 2,
+      useCORS: true,
+      logging: false,
+      backgroundColor: '#ffffff',
+    });
 
-  doc.rect(col1X, yPos, CONTENT_WIDTH * 0.75, rowHeight);
-  doc.rect(col2X, yPos, CONTENT_WIDTH * 0.25, rowHeight);
-  doc.text('警備場所', col1X + 2, yPos + 7);
-  doc.text(report.guard_location, col1X + 20, yPos + 7);
-  doc.text(userName, col2X + 10, yPos + 7);
-  yPos += rowHeight;
+    const imgData = canvas.toDataURL('image/png');
+    const imgWidth = 210; // A4 width in mm
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-  doc.rect(col1X, yPos, CONTENT_WIDTH * 0.75, 8);
-  doc.rect(col2X, yPos, CONTENT_WIDTH * 0.25, 8);
-  doc.setFillColor(220, 220, 220);
-  doc.rect(col1X, yPos, CONTENT_WIDTH * 0.75, 8, 'F');
-  doc.rect(col2X, yPos, CONTENT_WIDTH * 0.25, 8, 'F');
-  doc.setFontSize(9);
-  doc.text('勤務時間', col1X + 2, yPos + 5);
-  doc.text('天気', col2X + 2, yPos + 5);
-  yPos += 8;
+    pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+  } finally {
+    document.body.removeChild(container);
+  }
+}
 
-  doc.setFontSize(10);
-  const fromDate = new Date(report.work_date_from);
-  const toDate = new Date(report.work_date_to);
-  
-  const timeRow1Height = 10;
-  doc.rect(col1X, yPos, CONTENT_WIDTH * 0.75, timeRow1Height);
-  doc.rect(col2X, yPos, CONTENT_WIDTH * 0.25, timeRow1Height);
-  doc.text('（自）', col1X + 2, yPos + 7);
-  doc.text(formatWarekiDateTime(fromDate), col1X + 15, yPos + 7);
-  doc.text('休憩', col2X + 8, yPos + 7);
-  yPos += timeRow1Height;
+function createReportHTML(report: Report, userName: string): HTMLDivElement {
+  const container = document.createElement('div');
+  container.style.cssText = `
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    width: 794px;
+    background: white;
+    padding: 40px;
+    font-family: 'Noto Sans JP', 'Yu Gothic', 'Meiryo', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+  `;
 
-  const timeRow2Height = 10;
-  doc.rect(col1X, yPos, CONTENT_WIDTH * 0.75, timeRow2Height);
-  doc.rect(col2X, yPos, CONTENT_WIDTH * 0.25, timeRow2Height);
-  doc.text('（至）', col1X + 2, yPos + 7);
-  doc.text(formatWarekiDateTime(toDate), col1X + 15, yPos + 7);
-  doc.text('残業', col2X + 8, yPos + 7);
-  yPos += timeRow2Height;
+  const hasSpecialNotes = report.special_notes === 'yes' || (report.special_notes_detail && report.special_notes_detail.length > 0);
 
-  doc.rect(col1X, yPos, CONTENT_WIDTH * 0.75, 8);
-  doc.setFillColor(220, 220, 220);
-  doc.rect(col1X, yPos, CONTENT_WIDTH * 0.75, 8, 'F');
-  doc.setFontSize(9);
-  doc.text('業    務', col1X + 2, yPos + 5);
-  doc.text('時間', col2X + 2, yPos + 5);
-  yPos += 8;
+  container.innerHTML = `
+    <style>
+      .pdf-container * {
+        box-sizing: border-box;
+      }
+      .pdf-title {
+        font-size: 24px;
+        font-weight: bold;
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .pdf-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 15px;
+      }
+      .pdf-table td, .pdf-table th {
+        border: 1px solid #000;
+        padding: 8px;
+      }
+      .pdf-table th {
+        background-color: #e0e0e0;
+        font-weight: bold;
+        text-align: left;
+      }
+      .pdf-checkbox {
+        font-size: 16px;
+      }
+      .pdf-footer {
+        margin-top: 30px;
+        font-size: 12px;
+        line-height: 1.8;
+      }
+      .pdf-work-detail-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0;
+        border: 1px solid #000;
+        margin-bottom: 15px;
+      }
+      .pdf-work-detail-cell {
+        border: 1px solid #000;
+        padding: 10px;
+        min-height: 60px;
+      }
+      .pdf-work-detail-number {
+        font-size: 12px;
+        color: #666;
+        margin-bottom: 5px;
+      }
+    </style>
+    <div class="pdf-container">
+      <div class="pdf-title">警備報告書（当社控）</div>
 
+      <table class="pdf-table">
+        <tr>
+          <td style="width: 20%"><strong>契約先</strong></td>
+          <td style="width: 55%">${escapeHtml(report.contract_name)}</td>
+          <td style="width: 25%" rowspan="2" style="text-align: center; vertical-align: middle;">
+            <div><strong>ご署名</strong></div>
+            <div style="margin-top: 10px;">${escapeHtml(userName)}</div>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>警備場所</strong></td>
+          <td>${escapeHtml(report.guard_location)}</td>
+        </tr>
+      </table>
+
+      <table class="pdf-table">
+        <tr>
+          <th style="width: 75%">勤務時間</th>
+          <th style="width: 25%">天気</th>
+        </tr>
+        <tr>
+          <td>（自） ${formatWarekiDateTime(new Date(report.work_date_from))}</td>
+          <td rowspan="2" style="text-align: center;">休憩<br><br>残業</td>
+        </tr>
+        <tr>
+          <td>（至） ${formatWarekiDateTime(new Date(report.work_date_to))}</td>
+        </tr>
+      </table>
+
+      <table class="pdf-table">
+        <tr>
+          <th colspan="2">業務内容</th>
+        </tr>
+        ${generateWorkTypeRows(report.work_type)}
+      </table>
+
+      <table class="pdf-table">
+        <tr>
+          <th>担当業務詳細</th>
+        </tr>
+      </table>
+      <div class="pdf-work-detail-grid">
+        ${generateWorkDetailGrid(report.work_detail || '')}
+      </div>
+
+      <table class="pdf-table">
+        <tr>
+          <td style="width: 25%"><strong>特記事項</strong></td>
+          <td style="width: 75%">
+            <span class="pdf-checkbox">${hasSpecialNotes ? '☑' : '☐'}</span> あり
+            <span class="pdf-checkbox">${hasSpecialNotes ? '☐' : '☑'}</span> なし
+          </td>
+        </tr>
+        ${hasSpecialNotes && report.special_notes_detail ? `
+        <tr>
+          <td colspan="2">
+            <strong>特記事項の内容</strong><br>
+            ${escapeHtml(report.special_notes_detail)}
+          </td>
+        </tr>
+        ` : ''}
+      </table>
+
+      <table class="pdf-table">
+        <tr>
+          <td style="width: 40%"><strong>交通誘導検定合格者配置</strong></td>
+          <td style="width: 30%">
+            <span class="pdf-checkbox">${report.traffic_guide_assigned ? '☑' : '☐'}</span> あり
+            <span class="pdf-checkbox">${report.traffic_guide_assigned ? '☐' : '☑'}</span> なし
+          </td>
+          <td style="width: 30%">
+            ${report.traffic_guide_assignee_name ? `検定合格者氏名: ${escapeHtml(report.traffic_guide_assignee_name)}` : ''}
+          </td>
+        </tr>
+        <tr>
+          <td><strong>雑踏警備検定合格者配置</strong></td>
+          <td>
+            <span class="pdf-checkbox">${report.misc_guard_assigned ? '☑' : '☐'}</span> あり
+            <span class="pdf-checkbox">${report.misc_guard_assigned ? '☐' : '☑'}</span> なし
+          </td>
+          <td>
+            ${report.misc_guard_assignee_name ? `検定合格者氏名: ${escapeHtml(report.misc_guard_assignee_name)}` : ''}
+          </td>
+        </tr>
+      </table>
+
+      <table class="pdf-table">
+        <tr>
+          <th>備考</th>
+        </tr>
+        <tr>
+          <td style="min-height: 80px; vertical-align: top;">
+            ${report.remarks ? escapeHtml(report.remarks) : ''}
+          </td>
+        </tr>
+      </table>
+
+      <div class="pdf-footer">
+        <div><strong>セリュートラスト株式会社</strong></div>
+        <div>〒674-0058 兵庫県明石市大久保町駅前二丁目1番地の10</div>
+        <div>TEL 078-945-5628　FAX 078-945-5629</div>
+      </div>
+    </div>
+  `;
+
+  return container;
+}
+
+function generateWorkTypeRows(selectedType: string): string {
   const workTypes = [
     '道路工事に於ける交通誘導',
     '建設工事現場に於ける交通誘導',
@@ -119,109 +251,33 @@ function drawReportPage(doc: jsPDF, report: Report, userName: string): void {
     '人の雑踏する場所に於ける負傷者等の事故発生を警戒・防止業務',
   ];
 
-  doc.setFontSize(9);
-  workTypes.forEach((type) => {
-    const workRowHeight = 8;
-    doc.rect(col1X, yPos, CONTENT_WIDTH, workRowHeight);
-    const checkbox = type === report.work_type ? '☑' : '☐';
-    doc.text(checkbox, col1X + 5, yPos + 6);
-    doc.text(type, col1X + 12, yPos + 6);
-    yPos += workRowHeight;
-  });
+  return workTypes
+    .map((type) => {
+      const isSelected = type === selectedType;
+      const checkbox = isSelected ? '☑' : '☐';
+      return `
+        <tr>
+          <td colspan="2">
+            <span class="pdf-checkbox">${checkbox}</span> ${escapeHtml(type)}
+          </td>
+        </tr>
+      `;
+    })
+    .join('');
+}
 
-  doc.rect(col1X, yPos, CONTENT_WIDTH * 0.75, 8);
-  doc.setFillColor(220, 220, 220);
-  doc.rect(col1X, yPos, CONTENT_WIDTH * 0.75, 8, 'F');
-  doc.setFontSize(9);
-  doc.text('担当業務詳細', col1X + 2, yPos + 5);
-  yPos += 8;
-
-  const detailGridRows = 3;
-  const detailGridCols = 2;
-  const detailCellWidth = CONTENT_WIDTH / detailGridCols;
-  const detailCellHeight = 15;
-
-  doc.setFontSize(8);
-  for (let row = 0; row < detailGridRows; row++) {
-    for (let col = 0; col < detailGridCols; col++) {
-      const cellX = col1X + (col * detailCellWidth);
-      const cellY = yPos + (row * detailCellHeight);
-      const cellNum = row * detailGridCols + col + 1;
-      
-      doc.rect(cellX, cellY, detailCellWidth, detailCellHeight);
-      doc.text(cellNum.toString(), cellX + 2, cellY + 5);
-      
-      if (report.work_detail && row === 0 && col === 0) {
-        const lines = doc.splitTextToSize(report.work_detail, detailCellWidth - 8);
-        const maxLines = Math.floor((detailCellHeight - 5) / 4);
-        const displayLines = lines.slice(0, maxLines);
-        displayLines.forEach((line: string, idx: number) => {
-          doc.text(line, cellX + 8, cellY + 5 + (idx * 4));
-        });
-      }
-    }
+function generateWorkDetailGrid(workDetail: string): string {
+  const cells = [];
+  for (let i = 1; i <= 6; i++) {
+    const content = i === 1 && workDetail ? escapeHtml(workDetail) : '';
+    cells.push(`
+      <div class="pdf-work-detail-cell">
+        <div class="pdf-work-detail-number">${i}</div>
+        <div>${content}</div>
+      </div>
+    `);
   }
-  yPos += detailGridRows * detailCellHeight;
-
-  const specialNotesHeight = 12;
-  doc.rect(col1X, yPos, CONTENT_WIDTH * 0.25, specialNotesHeight);
-  doc.rect(col1X + CONTENT_WIDTH * 0.25, yPos, CONTENT_WIDTH * 0.75, specialNotesHeight);
-  doc.setFontSize(9);
-  doc.text('特記事項', col1X + 2, yPos + 8);
-  const hasSpecialNotes = report.special_notes === 'yes' || (report.special_notes_detail && report.special_notes_detail.length > 0);
-  const specialNotesCheckbox = hasSpecialNotes ? '☑ あり    ☐ なし' : '☐ あり    ☑ なし';
-  doc.text(specialNotesCheckbox, col1X + CONTENT_WIDTH * 0.25 + 5, yPos + 8);
-  yPos += specialNotesHeight;
-
-  if (hasSpecialNotes && report.special_notes_detail) {
-    const notesContentHeight = 20;
-    doc.rect(col1X, yPos, CONTENT_WIDTH, notesContentHeight);
-    doc.setFontSize(8);
-    doc.text('特記事項の内容', col1X + 2, yPos + 5);
-    const notesLines = doc.splitTextToSize(report.special_notes_detail, CONTENT_WIDTH - 8);
-    notesLines.slice(0, 3).forEach((line: string, idx: number) => {
-      doc.text(line, col1X + 4, yPos + 10 + (idx * 5));
-    });
-    yPos += notesContentHeight;
-  }
-
-  const certHeight = 10;
-  doc.rect(col1X, yPos, CONTENT_WIDTH, certHeight);
-  doc.setFontSize(9);
-  const trafficCheckbox = report.traffic_guide_assigned ? '☑ あり    ☐ なし' : '☐ あり    ☑ なし';
-  doc.text('交通誘導検定合格者配置', col1X + 2, yPos + 7);
-  doc.text(trafficCheckbox, col1X + 50, yPos + 7);
-  if (report.traffic_guide_assignee_name) {
-    doc.text(`検定合格者氏名: ${report.traffic_guide_assignee_name}`, col1X + 90, yPos + 7);
-  }
-  yPos += certHeight;
-
-  doc.rect(col1X, yPos, CONTENT_WIDTH, certHeight);
-  const miscCheckbox = report.misc_guard_assigned ? '☑ あり    ☐ なし' : '☐ あり    ☑ なし';
-  doc.text('雑踏警備検定合格者配置', col1X + 2, yPos + 7);
-  doc.text(miscCheckbox, col1X + 50, yPos + 7);
-  if (report.misc_guard_assignee_name) {
-    doc.text(`検定合格者氏名: ${report.misc_guard_assignee_name}`, col1X + 90, yPos + 7);
-  }
-  yPos += certHeight;
-
-  const remarksHeight = 20;
-  doc.rect(col1X, yPos, CONTENT_WIDTH, remarksHeight);
-  doc.setFontSize(9);
-  doc.text('備考', col1X + 2, yPos + 7);
-  if (report.remarks) {
-    doc.setFontSize(8);
-    const remarksLines = doc.splitTextToSize(report.remarks, CONTENT_WIDTH - 8);
-    remarksLines.slice(0, 3).forEach((line: string, idx: number) => {
-      doc.text(line, col1X + 4, yPos + 12 + (idx * 5));
-    });
-  }
-
-  doc.setFontSize(9);
-  doc.text('セリュートラスト株式会社', MARGIN, PAGE_HEIGHT - 15);
-  doc.setFontSize(8);
-  doc.text('〒674-0058 兵庫県明石市大久保町駅前二丁目1番地の10', MARGIN, PAGE_HEIGHT - 10);
-  doc.text('TEL 078-945-5628  FAX 078-945-5629', MARGIN, PAGE_HEIGHT - 5);
+  return cells.join('');
 }
 
 function formatWarekiDateTime(date: Date): string {
@@ -248,4 +304,10 @@ function generateFileName(report: Report): string {
   const dateStr = formatDateForFile(date);
   const timeStr = `${String(date.getHours()).padStart(2, '0')}${String(date.getMinutes()).padStart(2, '0')}${String(date.getSeconds()).padStart(2, '0')}`;
   return `セリュートラスト株式会社_${dateStr}_${timeStr}.pdf`;
+}
+
+function escapeHtml(text: string): string {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
 }
